@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import OperationalError
@@ -9,6 +10,7 @@ from app.config import settings
 from app.database import SessionLocal, engine
 from app.models import Base
 from app.routers import auth, permissions, roles, users
+from app.routers import lookup
 from app.seeder import seed
 
 # Auto-create tables
@@ -19,6 +21,15 @@ with SessionLocal() as db:
     seed(db)
 
 app = FastAPI(title="Starter API", version="1.0.0", docs_url="/docs")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    max_age=86400,
+)
 
 
 # Global exception → ApiResponse format
@@ -63,6 +74,7 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(roles.router)
 app.include_router(permissions.router)
+app.include_router(lookup.router)
 
 
 if __name__ == "__main__":
