@@ -11,6 +11,7 @@ from app.database import SessionLocal, engine
 from app.models import Base
 from app.routers import auth, permissions, roles, users
 from app.routers import lookup
+from app.routers import config as config_router
 from app.seeder import seed
 
 # Auto-create tables
@@ -75,6 +76,7 @@ app.include_router(users.router)
 app.include_router(roles.router)
 app.include_router(permissions.router)
 app.include_router(lookup.router)
+app.include_router(config_router.router)
 
 
 if __name__ == "__main__":

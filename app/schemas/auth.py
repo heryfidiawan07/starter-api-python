@@ -36,4 +36,4 @@ class ChangePasswordRequest(BaseModel):
 
 
 class OAuthRequest(BaseModel):
-    token: str
+    access_token: str

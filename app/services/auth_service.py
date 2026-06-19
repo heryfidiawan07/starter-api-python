@@ -181,7 +181,7 @@ def _handle_oauth(provider: str, social_id: str, email: str, name: str, db: Sess
 
 def oauth_google(req: OAuthRequest, db: Session) -> dict:
     with httpx.Client() as client:
-        r = client.get(f"https://www.googleapis.com/oauth2/v2/userinfo?access_token={req.token}")
+        r = client.get(f"https://www.googleapis.com/oauth2/v2/userinfo?access_token={req.access_token}")
         r.raise_for_status()
         data = r.json()
     return _handle_oauth("google", data["id"], data["email"], data["name"], db)
@@ -189,7 +189,7 @@ def oauth_google(req: OAuthRequest, db: Session) -> dict:
 
 def oauth_facebook(req: OAuthRequest, db: Session) -> dict:
     with httpx.Client() as client:
-        r = client.get(f"https://graph.facebook.com/me?fields=id,name,email&access_token={req.token}")
+        r = client.get(f"https://graph.facebook.com/me?fields=id,name,email&access_token={req.access_token}")
         r.raise_for_status()
         data = r.json()
     return _handle_oauth("facebook", data["id"], data["email"], data["name"], db)
