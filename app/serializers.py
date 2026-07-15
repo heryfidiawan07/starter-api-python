@@ -34,7 +34,38 @@ def serialize_role(r) -> dict:
         "updated_at": _dt(r.updated_at),
     }
     if r.permissions is not None:
+        actions = []
+        nodes = {}
+        root_nodes = []
+        
+        for p in r.permissions:
+            if p.type == "action":
+                actions.append(p.name)
+            else:
+                nodes[p.id] = {
+                    "id": p.id,
+                    "parent_id": p.parent_id,
+                    "label": p.label,
+                    "icon": p.icon,
+                    "route": p.route,
+                    "order": p.order,
+                    "children": []
+                }
+                
+        for p in r.permissions:
+            if p.type == "action":
+                continue
+            node = nodes[p.id]
+            if not p.parent_id:
+                root_nodes.append(node)
+            else:
+                if p.parent_id in nodes:
+                    nodes[p.parent_id]["children"].append(node)
+                    
+        d["actions"] = actions
+        d["menus"] = root_nodes
         d["permissions"] = [serialize_permission(p) for p in r.permissions]
+        
     return d
 
 

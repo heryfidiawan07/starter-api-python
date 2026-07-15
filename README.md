@@ -102,7 +102,7 @@ Swagger UI: `http://localhost:8000/docs`
 | `DB_PORT` | `3306` | Port database |
 | `DB_USER` | `root` | Username database |
 | `DB_PASS` | _(kosong)_ | Password database |
-| `DB_NAME` | `starter_api` | Nama database |
+| `DB_NAME` | `fid_starter_api` | Nama database |
 | `JWT_SECRET` | `secret` | Secret key JWT |
 | `JWT_ACCESS_EXPIRE` | `15` | Expire access token (menit) |
 | `JWT_REFRESH_EXPIRE` | `10080` | Expire refresh token (menit) |
@@ -258,10 +258,10 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: starter-api-db
+    container_name: fid-starter-api-db
     environment:
       MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: starter_api
+      MYSQL_DATABASE: fid_starter_api
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
