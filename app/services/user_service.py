@@ -38,7 +38,7 @@ def create(req: CreateUserRequest, db: Session) -> User:
     user = User(
         name=req.name, email=req.email, username=req.username,
         password=hash_password(req.password),
-        role_id=req.role_id, is_root=False, is_active=True, email_verified=False,
+        role_id=req.role_id, is_root=False, is_active=True, email_verified=True, verified_at=datetime.utcnow(),
     )
     db.add(user)
     db.commit()

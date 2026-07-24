@@ -34,38 +34,47 @@ def serialize_role(r) -> dict:
         "updated_at": _dt(r.updated_at),
     }
     if r.permissions is not None:
-        actions = []
         nodes = {}
-        root_nodes = []
-        
         for p in r.permissions:
-            if p.type == "action":
-                actions.append(p.name)
-            else:
-                nodes[p.id] = {
-                    "id": p.id,
-                    "parent_id": p.parent_id,
-                    "label": p.label,
-                    "icon": p.icon,
-                    "route": p.route,
-                    "order": p.order,
-                    "children": []
-                }
-                
+            if p.type in ("category", "menu"):
+                if p.id not in nodes:
+                    nodes[p.id] = {
+                        "id": p.id,
+                        "label": p.label,
+                        "name": p.name,
+                        "type": p.type,
+                        "icon": p.icon,
+                        "route": p.route,
+                        "actions": [],
+                        "children": []
+                    }
+
+        permissions_tree = []
         for p in r.permissions:
-            if p.type == "action":
-                continue
-            node = nodes[p.id]
-            if not p.parent_id:
-                root_nodes.append(node)
-            else:
-                if p.parent_id in nodes:
-                    nodes[p.parent_id]["children"].append(node)
-                    
-        d["actions"] = actions
-        d["menus"] = root_nodes
-        d["permissions"] = [serialize_permission(p) for p in r.permissions]
-        
+            if p.type == "category":
+                node = nodes.get(p.id)
+                if node and node not in permissions_tree:
+                    permissions_tree.append(node)
+            elif p.type == "menu":
+                if p.parent_id:
+                    parent = nodes.get(p.parent_id)
+                    node = nodes.get(p.id)
+                    if parent and node and node not in parent["children"]:
+                        parent["children"].append(node)
+            elif p.type == "action":
+                if p.parent_id:
+                    parent = nodes.get(p.parent_id)
+                    if parent:
+                        action_node = {
+                            "id": p.id,
+                            "name": p.name,
+                            "label": p.label,
+                        }
+                        if action_node not in parent["actions"]:
+                            parent["actions"].append(action_node)
+
+        d["permissions"] = permissions_tree
+
     return d
 
 
